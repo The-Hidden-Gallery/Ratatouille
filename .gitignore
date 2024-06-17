@@ -1,2 +1,4 @@
 # I want to ignore all files in the directory "ignore"  
 ignore/*
+bproc/object_factory
+bproc/output_imgs/*
