@@ -2,4 +2,4 @@
 ignore/*
 bproc/object_factory
 bproc/output_imgs/*
-.venv
+.venvn  
