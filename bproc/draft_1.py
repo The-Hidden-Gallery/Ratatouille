@@ -18,10 +18,10 @@ def parse_args() -> argparse.Namespace:
     argparse.Namespace: The parsed arguments
     """
     parser = argparse.ArgumentParser()
+    parser.add_argument('run', nargs='?', default="-1",
+                         help="Run number to save the images in the same folder")
     parser.add_argument('output_dir', nargs='?', default="output_imgs/draft_1",
                          help="Path to where the final files, will be saved")
-    parser.add_argument('run', nargs='?', default="0",
-                         help="Run number to save the images in the same folder")
     return parser.parse_args()
 
 # def load_samples(file_name: str = "samples.csv") -> pd.DataFrame:
@@ -36,6 +36,36 @@ def parse_args() -> argparse.Namespace:
 #     samples = pd.read_csv(samples_file)
 
 #     return samples
+def create_table() -> bpy.types.Object:
+    """
+    This function will create a table object in the scene
+    """
+    bpy.ops.mesh.primitive_plane_add(enter_editmode=False, align='WORLD')
+    table = bpy.context.active_object
+    table.name = "Table"
+    table_scale = (60, 60, 1)
+    table.scale = table_scale
+
+    return table
+
+
+def generate_colors(n_colors: int = 20) -> np.ndarray:
+    """
+    This function will generate n_colors random colors
+    
+    Args:
+    n_colors (int): The number of colors to generate
+    
+    Returns:
+    np.ndarray: The generated colors
+    """
+    colors = []
+    for i in range (0,n_colors):
+        new_table_color = bpy.data.materials.new("")
+        new_table_color.diffuse_color = (random.random(),random.random(),random.random(),1)
+        colors.append(new_table_color)
+
+    return colors
 
 def save_images(data:str, output_file:str = "output_imgs/", run:str = None) -> None:
     """
@@ -49,18 +79,28 @@ def save_images(data:str, output_file:str = "output_imgs/", run:str = None) -> N
     Returns:
     None
     """
-    if run:
-        output_file = output_file + f"/{run}"
-        try:  
-            os.mkdir(output_file)
-        except OSError as error:
-            print("The folder already exists and any data inside it might be overwritten.")
-            confirmation = ""
-            while confirmation.lower() not in ["y", "n"]:
-                confirmation = input("Do you want to continue? (Y/N): ")
-            if confirmation.lower() == "n":
-                return
+    
+    if run != "-1": # If there is a run number other than the default selected, then we create a subfolder but 
+        # we check if the folder already exists and ask the user if they want to overwrite it just in case it's a mistake 
+        # We give them the chance to change the run number if they want to so as to not loose the time to run the script again correctly
+        care = True
+        while care: 
+            try_file = output_file + f"/{run}"
+            try:  
+                os.mkdir(try_file)
+                care = False
+            except OSError as error:
+                print(f"The folder {try_file} already exists and any data inside it might be overwritten.")
+                confirmation = ""
+                while confirmation.lower() not in ["y", "n"]:
+                    confirmation = input("Type y to rewrite, n to choose a new folder (Y/N): ")
+                if confirmation.lower() == "n":
+                    run = input("Please enter a new RUN number: ")
+                    print(run)
+                else:
+                    care = False
             pass
+        output_file = output_file + f"/{run}"
     else: 
         try:  
             os.mkdir(output_file)
@@ -84,6 +124,9 @@ def main():
     # Cargamos los objetos para tenerlos en memoria y poder manipularlos
     # bproc.load_objects()
 
+    # Create the 'table' and its colors
+    colors = generate_colors(7)
+    table = create_table()
     # Cargamos las muestras
     # samples = load_samples()
 
@@ -95,6 +138,9 @@ def main():
     # Load the .blend file containing the sample object (Monkey.obj)
     obj = bproc.loader.load_obj(current_dir + object_file)[0]
     obj.set_location([0, 0, 0])
+    obj2 = bproc.loader.load_obj(current_dir + object_file)[0]
+    obj2.set_location([0, 0, 0])
+    obj.set_rotation_euler([np.pi/2, 0, 0])
     obj.set_rotation_euler([np.pi/2, 0, 0])
 
     # Create a point light next to it
@@ -110,15 +156,19 @@ def main():
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
     # Sample five camera poses
-    for i in range(2):
+    for i in range(7):
         # Sample random camera location above objects
-        location = np.random.uniform([-10, -10, 8], [10, 10, 12])
+        location = np.random.uniform([0, 0, 8], [10, 10, 12])
         # Compute rotation based on vector going from location towards poi
         rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
         # Add homog cam pose based on location an rotation
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
         bproc.camera.add_camera_pose(cam2world_matrix)
+        obj.set_location([0, 0, i*0.5])
 
+        
+
+    table.data.materials.append(colors[i])
     # Render the scene
     data = bproc.renderer.render()
     save_images(data, args.output_dir, args.run)
