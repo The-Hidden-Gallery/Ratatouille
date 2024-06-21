@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 # Constants
-N_SAMPLES = 100
+N_SAMPLES = 10
 TABLE_COLORS = 20
 PLATE_TEXTURES = 4
 PLATE_TYPES = 11
@@ -28,13 +28,13 @@ LIMITS_CAMERA_ROT_Z = [-1,1]
 # - The ingredient must be in the correct scale ( bounding box given by max and min values)
 # - The ingredient must be in the correct material ( pending )
 INGREDIENTS = {
-    "A": {"position": [[0, 0, 0], [2, 2, 2]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [1, 1, 1]]},
-    "B": {"position": [[3, 3, 3], [5, 5, 5]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [1, 1, 1]]},
-    "C": {"position": [[6, 6, 6], [8, 8, 8]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [1, 1, 1]]},
-    "D": {"position": [[9, 9, 9], [10, 10, 10]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [1, 1, 1]]},
+    "A": {"position": [[0, 0, 0], [20, 20, 20]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [10, 10, 10]]},
+    "B": {"position": [[3, 3, 3], [50, 50, 50]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [10, 10, 10]]},
+    "C": {"position": [[3, 3, 3], [80, 80, 80]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [10, 10, 10]]},
+    "D": {"position": [[4, 1, 2], [10, 10, 10]], "rotation": [[0, 0, 0], [75, 75, 75]], "scale": [[1, 1, 1], [10, 10, 10]]},
 }
 INGREDIENT_POSIBILITIES ={
-    "position": [[-15, -15, 0], [15, 15, 6]],
+    "position": [[0, 0, 0], [10, 10, 10]],
     "rotation": [[0, 0, 0], [90, 90, 90]],
     "scale": [[1, 1, 1], [6, 6, 6]]
 }
@@ -58,7 +58,7 @@ REASON_TO_NUMBER = {
 # - Light_pos, a list of 3 values representing the light position
 # - Light_energy, a value representing the light energy
 
-def assign_label(worldinfo: dict):
+def assign_label(worldinfo: dict) -> tuple[bool, list[int]]:
     """
     Assigns a label to the sample based on the positions, rotations and scales of the objects in the scene
 
@@ -116,13 +116,38 @@ for i in range(N_SAMPLES):
 
 
     worldinfo = {}
+    for ingredient in INGREDIENTS.keys():
+        ingredient_pos = [random.uniform(INGREDIENT_POSIBILITIES["position"][0][0], INGREDIENT_POSIBILITIES["position"][1][0]),
+                        random.uniform(INGREDIENT_POSIBILITIES["position"][0][1], INGREDIENT_POSIBILITIES["position"][1][1]),
+                        random.uniform(INGREDIENT_POSIBILITIES["position"][0][2], INGREDIENT_POSIBILITIES["position"][1][2])]
+        ingredient_rot = [random.uniform(INGREDIENT_POSIBILITIES["rotation"][0][0], INGREDIENT_POSIBILITIES["rotation"][1][0]),
+                        random.uniform(INGREDIENT_POSIBILITIES["rotation"][0][1], INGREDIENT_POSIBILITIES["rotation"][1][1]),
+                        random.uniform(INGREDIENT_POSIBILITIES["rotation"][0][2], INGREDIENT_POSIBILITIES["rotation"][1][2])]
+        ingredient_scale = [random.uniform(INGREDIENT_POSIBILITIES["scale"][0][0], INGREDIENT_POSIBILITIES["scale"][1][0]),
+                        random.uniform(INGREDIENT_POSIBILITIES["scale"][0][1], INGREDIENT_POSIBILITIES["scale"][1][1]),
+                        random.uniform(INGREDIENT_POSIBILITIES["scale"][0][2], INGREDIENT_POSIBILITIES["scale"][1][2])]
+        worldinfo[ingredient] = {"position": ingredient_pos, "rotation": ingredient_rot, "scale": ingredient_scale}
     # Aqui se escogen las posiciones, rotaciones y escalas de los objetos en la escena y en función a eso se le asigna un label
-
     label, reason = assign_label(worldinfo)
 
-    label = random.choice([True, False])
+    sample_data = {
+    "Sample_number": i,
+    "Table_color": table_color,
+    "Plate_texture": plate_texture,
+    "Plate_type": plate_type,
+    "Camera_pos": camera_pos,
+    "Camera_rot": camera_rot,
+    "Light_pos": light_pos,
+    "Light_energy": light_energy,
+    "World_info": worldinfo,
+    "Label": label,
+    "Reason": reason
+    }
 
-    dataset = dataset.append({"Sample_number":i, "Table_color": table_color, "Plate_texture": plate_texture, "Plate_type": plate_type, "Camera_pos": camera_pos, "Camera_rot": camera_rot, "Light_pos": light_pos, "Light_energy": light_energy, "World_info":worldinfo, "Label": label, "Reason":reason}, ignore_index=True)
+    # Convert the dictionary to a DataFrame
+    sample_df = pd.DataFrame([sample_data])
 
-dataset.to_csv("dataset.csv", index=False)
+    # Concatenate the new DataFrame with the existing one
+    dataset = pd.concat([dataset, sample_df], ignore_index=True)
+dataset.to_csv("samples.csv", index=False)
 print("Dataset created")
