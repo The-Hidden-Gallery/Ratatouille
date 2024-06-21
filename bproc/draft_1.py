@@ -20,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     #parser.add_argument('scene', nargs='?', default="examples/resources/scene.obj", help="Path to the scene.obj file")
     parser.add_argument('output_dir', nargs='?', default="ouput_images/draft_1", help="Path to where the final files, will be saved")
+    parser.add_argument('run', nargs='?', default="0", help="Run number to save the images in the same folder")
     return parser.parse_args()
 
 def load_samples(file_name: str = "samples.csv") -> pd.DataFrame:
@@ -68,11 +69,11 @@ def main():
 
     # Por cada muestra se coloca el mundo como nos indica la muestra y se renderiza
     
-    
+
     # Render the scene
     data = bproc.renderer.render()
-    save_images(data, args.output_dir)
-    
+    save_images(data, args.output_dir + r"\_" + args.run)
+
 
 if __name__ == "__main__":
     main()

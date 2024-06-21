@@ -3,15 +3,27 @@ import numpy as np
 import imageio
 import os
 
-def save_images(data, output_file):
-    img_array = data["colors"]
+def save_images(data:str, output_file:str = "output_imgs/output_img") -> None:
+    """
+    Function to save the images in the data dictionary to the output_file as .png files
 
+    Args:
+    data (dict): The data dictionary containing the images
+    output_file (str): The output file to save the images to
+
+    Returns:
+    None
+    """
+    img_array = data["colors"]
+    os.mkdir(output_file)
+    output_file = output_file + '/'
     for i in range(len(img_array)):
         # Write the data into a .png file using ImageIO
-        output_file_i = output_file + f"_{i}.png"
+        output_file_i = output_file + f"{i}.png"
         imageio.imwrite(output_file_i, img_array[i])
 
         print(f"Image saved to {output_file}")
+
 
 
 def main(object_file, output_file):
@@ -53,9 +65,10 @@ def main(object_file, output_file):
     # Render the scene
     data = bproc.renderer.render()
 
-    save_images(data, output_file)
+    run = "8"
 
+    save_images(data, output_file + "/" + run)
 if __name__ == "__main__":
     object_file = r"\Raw_objects\Monkey.obj"
-    output_file = r"\output_imgs\00"
+    output_file = r"\output_imgs"
     main(object_file, output_file)
