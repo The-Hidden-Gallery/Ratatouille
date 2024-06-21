@@ -3,7 +3,7 @@ import numpy as np
 import imageio
 import os
 
-def save_image(data, output_file):
+def save_images(data, output_file):
     img_array = data["colors"]
 
     for i in range(len(img_array)):
@@ -53,7 +53,7 @@ def main(object_file, output_file):
     # Render the scene
     data = bproc.renderer.render()
 
-    save_image(data, output_file)
+    save_images(data, output_file)
 
 if __name__ == "__main__":
     object_file = r"\Raw_objects\Monkey.obj"
