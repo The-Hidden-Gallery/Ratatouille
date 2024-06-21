@@ -3,19 +3,32 @@ import numpy as np
 import imageio
 import os
 
-def save_images(data:str, output_file:str = "output_imgs/output_img") -> None:
+def save_images(data:str, output_file:str = "output_imgs/output_img", run:str = None) -> None:
     """
     Function to save the images in the data dictionary to the output_file as .png files
 
     Args:
     data (dict): The data dictionary containing the images
     output_file (str): The output file to save the images to
+    run (str): A subfolder to save the images to (optional)
 
     Returns:
     None
     """
+    if run:
+        output_file = output_file + f"/{run}"
+        try:  
+            os.mkdir(output_file)
+        except OSError as error:
+            print(error)
+            return 
+    else: 
+        try:  
+            os.mkdir(output_file)
+        except:
+            pass
+
     img_array = data["colors"]
-    os.mkdir(output_file)
     output_file = output_file + '/'
     for i in range(len(img_array)):
         # Write the data into a .png file using ImageIO
@@ -53,7 +66,7 @@ def main(object_file, output_file):
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
     # Sample five camera poses
-    for i in range(5):
+    for i in range(2):
         # Sample random camera location above objects
         location = np.random.uniform([-10, -10, 8], [10, 10, 12])
         # Compute rotation based on vector going from location towards poi
@@ -65,9 +78,9 @@ def main(object_file, output_file):
     # Render the scene
     data = bproc.renderer.render()
 
-    run = "8"
+    run = "6"
 
-    save_images(data, output_file + "/" + run)
+    save_images(data, output_file, run)
 if __name__ == "__main__":
     object_file = r"\Raw_objects\Monkey.obj"
     output_file = r"\output_imgs"
