@@ -1,5 +1,6 @@
 # I want to ignore all files in the directory "ignore"  
 ignore/*
-bproc/object_factory
+bproc/object_factory/plates.blend
+bproc/object_factory/plates.blend1
 bproc/output_imgs/*
 .venvn  

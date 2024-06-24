@@ -1,0 +1,14 @@
+# Blender 4.1.1 MTL File: 'plates.blend'
+# www.blender.org
+
+newmtl MetalGalvanizedSteelWorn001_1K
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd C:/Users/javir/Poliigon/Library/MetalGalvanizedSteelWorn001/MetalGalvanizedSteelWorn001_COL_1K_METALNESS.jpg
+map_Ns C:/Users/javir/Poliigon/Library/MetalGalvanizedSteelWorn001/MetalGalvanizedSteelWorn001_ROUGHNESS_1K_METALNESS.jpg
+map_refl C:/Users/javir/Poliigon/Library/MetalGalvanizedSteelWorn001/MetalGalvanizedSteelWorn001_METALNESS_1K_METALNESS.jpg
+map_d C:/Users/javir/Poliigon/Library/MetalGalvanizedSteelWorn001/MetalGalvanizedSteelWorn001_COL_1K_METALNESS.jpg
+map_Bump -bm 1.000000 C:/Users/javir/Poliigon/Library/MetalGalvanizedSteelWorn001/MetalGalvanizedSteelWorn001_NRM16_1K_METALNESS.tif
