@@ -51,7 +51,7 @@ def create_table() -> bpy.types.Object:
 
 def generate_colors(n_colors: int = 20) -> np.ndarray:
     """
-    This function will generate n_colors random colors
+    This function will generate n_colors random colors and give them some reflectance properties
     
     Args:
     n_colors (int): The number of colors to generate
@@ -63,6 +63,12 @@ def generate_colors(n_colors: int = 20) -> np.ndarray:
     for i in range (0,n_colors):
         new_table_color = bpy.data.materials.new("")
         new_table_color.diffuse_color = (random.random(),random.random(),random.random(),1)
+        new_table_color.use_nodes = True
+        #new_table_color = bpy.ops.material.new()
+        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.1
+        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.6
+        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Weight"].default_value = 0.3
+
         colors.append(new_table_color)
 
     return colors
@@ -145,8 +151,9 @@ def main():
 
     # Create a point light next to it
     light = bproc.types.Light()
-    light.set_location([2, -2, 0])
-    light.set_energy(300)
+    light.set_type("SUN")
+    light.set_location([350, -50, 0])
+    light.set_energy(0.4)
 
     # Set the camera and resolution
     bproc.camera.set_resolution(512, 512)
@@ -156,7 +163,7 @@ def main():
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
     # Sample five camera poses
-    for i in range(7):
+    for i in range(2):
         # Sample random camera location above objects
         location = np.random.uniform([0, 0, 8], [10, 10, 12])
         # Compute rotation based on vector going from location towards poi
@@ -168,7 +175,7 @@ def main():
 
         
 
-    table.data.materials.append(colors[i])
+    table.data.materials[0] = colors[i]
     # Render the scene
     data = bproc.renderer.render()
     save_images(data, args.output_dir, args.run)
