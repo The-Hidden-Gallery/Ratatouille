@@ -63,11 +63,11 @@ def generate_colors(n_colors: int = 20) -> np.ndarray:
     for i in range (0,n_colors):
         new_table_color = bpy.data.materials.new("")
         new_table_color.diffuse_color = (random.random(),random.random(),random.random(),1)
-        new_table_color.use_nodes = True
-        #new_table_color = bpy.ops.material.new()
-        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.1
-        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.6
-        new_table_color.node_tree.nodes["Principled BSDF"].inputs["Weight"].default_value = 0.3
+        # new_table_color.use_nodes = True
+        # #new_table_color = bpy.ops.material.new()
+        # new_table_color.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.1
+        # new_table_color.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.6
+        # new_table_color.node_tree.nodes["Principled BSDF"].inputs["Weight"].default_value = 0.3
 
         colors.append(new_table_color)
 
@@ -151,10 +151,10 @@ def main():
 
     # Create a point light next to it
     light = bproc.types.Light()
-    light.set_type("SUN")
-    light.set_location([350, -50, 0])
-    light.set_energy(0.4)
+    light.set_location([2, -2, 0])
+    light.set_energy(300)
 
+    table.data.materials.append(colors[0])
     # Set the camera and resolution
     bproc.camera.set_resolution(512, 512)
     cam_pose = bproc.math.build_transformation_mat([0, -5, 0], [np.pi / 2, 0, 0])
@@ -163,7 +163,7 @@ def main():
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
     # Sample five camera poses
-    for i in range(2):
+    for i in range(5):
         # Sample random camera location above objects
         location = np.random.uniform([0, 0, 8], [10, 10, 12])
         # Compute rotation based on vector going from location towards poi
@@ -172,10 +172,12 @@ def main():
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
         bproc.camera.add_camera_pose(cam2world_matrix)
         obj.set_location([0, 0, i*0.5])
+        print(colors[i])
+        table.data.materials[0] = colors[i]
+        print(len(table.data.materials))
 
         
 
-    table.data.materials[0] = colors[i]
     # Render the scene
     data = bproc.renderer.render()
     save_images(data, args.output_dir, args.run)
