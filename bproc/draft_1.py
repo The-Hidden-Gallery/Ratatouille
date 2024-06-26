@@ -48,8 +48,55 @@ def create_table() -> bpy.types.Object:
 
     return table
 
+def generate_colors(n_colors: int = 20) -> list:
+    """
+    This function will generate n_colors random colors and give them some reflectance properties.
+    
+    Args:
+    n_colors (int): The number of colors to generate.
+    
+    Returns:
+    list: The generated colors.
+    """
+    colors = []
+    for i in range(n_colors):
+        # Create a new material
+        new_table_color = bpy.data.materials.new(name=f"Color_{i}")
+        new_table_color.use_nodes = True
+        nodes = new_table_color.node_tree.nodes
 
-def generate_colors(n_colors: int = 20) -> np.ndarray:
+        # Clear all existing nodes
+        for node in nodes:
+            nodes.remove(node)
+
+        # Add Principled BSDF node
+        principled_bsdf = nodes.new(type='ShaderNodeBsdfPrincipled')
+        principled_bsdf.location = (0, 0)
+
+        # Add Material Output node
+        material_output = nodes.new(type='ShaderNodeOutputMaterial')
+        material_output.location = (200, 0)
+
+        # Connect Principled BSDF to Material Output
+        new_table_color.node_tree.links.new(principled_bsdf.outputs['BSDF'], material_output.inputs['Surface'])
+
+        # Generate random color values
+        values = [round(random.random(), 2), round(random.random(), 2), round(random.random(), 2), 1]
+        print(values)
+
+        # Set the base color of the Principled BSDF
+        principled_bsdf.inputs['Base Color'].default_value = values
+
+        # Set additional properties
+        principled_bsdf.inputs['Metallic'].default_value = 0.1
+        principled_bsdf.inputs['Roughness'].default_value = 0.6
+        # principled_bsdf.inputs['Specular'].default_value = 0.5  # If needed
+
+        colors.append(new_table_color)
+
+    return colors
+
+def generate_colors2(n_colors: int = 20) -> np.ndarray:
     """
     This function will generate n_colors random colors and give them some reflectance properties
     
@@ -62,7 +109,10 @@ def generate_colors(n_colors: int = 20) -> np.ndarray:
     colors = []
     for i in range (0,n_colors):
         new_table_color = bpy.data.materials.new("")
-        new_table_color.diffuse_color = (random.random(),random.random(),random.random(),1)
+        values = [round(random.random(),2), round(random.random(),2), round(random.random(),2), 1] 
+        print(values)
+        new_table_color.diffuse_color = values
+
         # new_table_color.use_nodes = True
         # #new_table_color = bpy.ops.material.new()
         # new_table_color.node_tree.nodes["Principled BSDF"].inputs["Metallic"].default_value = 0.1
@@ -73,7 +123,7 @@ def generate_colors(n_colors: int = 20) -> np.ndarray:
 
     return colors
 
-def save_images(data:str, output_file:str = "output_imgs/", run:str = None) -> None:
+def save_images(data:dict, output_file:str = "output_imgs/", run:str = None) -> None:
     """
     Function to save the images in the data dictionary to the output_file as .png files
 
@@ -154,7 +204,6 @@ def main():
     light.set_location([2, -2, 0])
     light.set_energy(300)
 
-    table.data.materials.append(colors[0])
     # Set the camera and resolution
     bproc.camera.set_resolution(512, 512)
     cam_pose = bproc.math.build_transformation_mat([0, -5, 0], [np.pi / 2, 0, 0])
@@ -163,6 +212,7 @@ def main():
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
     # Sample five camera poses
+    final_data = {"colors": []}
     for i in range(5):
         # Sample random camera location above objects
         location = np.random.uniform([0, 0, 8], [10, 10, 12])
@@ -172,15 +222,16 @@ def main():
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
         bproc.camera.add_camera_pose(cam2world_matrix)
         obj.set_location([0, 0, i*0.5])
-        print(colors[i])
-        table.data.materials[0] = colors[i]
-        print(len(table.data.materials))
+        table.data.materials.clear()
+        table.data.materials.append(colors[i])
+        # Render the scene
+        data = bproc.renderer.render()
+        final_data["colors"] += data["colors"]
+        
+    save_images(final_data, args.output_dir, args.run)
 
         
 
-    # Render the scene
-    data = bproc.renderer.render()
-    save_images(data, args.output_dir, args.run)
 
 
 if __name__ == "__main__":
