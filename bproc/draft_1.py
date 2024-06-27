@@ -82,7 +82,6 @@ def generate_colors(n_colors: int = 20) -> list:
 
         # Generate random color values
         values = [round(random.random(), 2), round(random.random(), 2), round(random.random(), 2), 1]
-        print(values)
 
         # Set the base color of the Principled BSDF
         principled_bsdf.inputs['Base Color'].default_value = values
@@ -174,19 +173,14 @@ def save_images(data:dict, output_file:str = "output_imgs/", run:str = None) -> 
         print(f"Image saved to {output_file}")
 
 def main():
+    # Initialize BlenderProc
     args = parse_args()
     bproc.init()
-
-    # Cargamos los objetos para tenerlos en memoria y poder manipularlos
-    # bproc.load_objects()
 
     # Create the 'table' and its colors
     colors = generate_colors(7)
     table = create_table()
-    # Cargamos las muestras
-    # samples = load_samples()
 
-    # Por cada muestra se coloca el mundo como nos indica la muestra y se renderiza
     # Set working directories
     current_dir = os.path.dirname(os.path.abspath(__file__))
     object_file = r"\Raw_objects\Monkey.obj"
@@ -194,10 +188,7 @@ def main():
     # Load the .blend file containing the sample object (Monkey.obj)
     obj = bproc.loader.load_obj(current_dir + object_file)[0]
     obj.set_location([0, 0, 0])
-    obj2 = bproc.loader.load_obj(current_dir + object_file)[0]
-    obj2.set_location([0, 0, 0])
-    obj.set_rotation_euler([np.pi/2, 0, 0])
-    obj.set_rotation_euler([np.pi/2, 0, 0])
+    obj.set_rotation_euler([np.pi / 2, 0, 0])
 
     # Create a point light next to it
     light = bproc.types.Light()
@@ -207,32 +198,36 @@ def main():
     # Set the camera and resolution
     bproc.camera.set_resolution(512, 512)
     cam_pose = bproc.math.build_transformation_mat([0, -5, 0], [np.pi / 2, 0, 0])
-    bproc.camera.add_camera_pose(cam_pose)
-    
+    # bproc.camera.add_camera_pose(cam_pose)
+
     # Find point of interest, all cam poses should look towards it
     poi = bproc.object.compute_poi([obj])
-    # Sample five camera poses
+
+    # Sample five camera poses and render each with a unique combination of object position and table color
     final_data = {"colors": []}
     for i in range(5):
         # Sample random camera location above objects
         location = np.random.uniform([0, 0, 8], [10, 10, 12])
         # Compute rotation based on vector going from location towards poi
         rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
-        # Add homog cam pose based on location an rotation
+        # Add homog cam pose based on location and rotation
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
-        bproc.camera.add_camera_pose(cam2world_matrix)
-        obj.set_location([0, 0, i*0.5])
+        bproc.camera.add_camera_pose(cam2world_matrix,0)
+        
+        # Update object position
+        obj.set_location([0, 0, i * 0.5])
+        
+        # Update table color
         table.data.materials.clear()
         table.data.materials.append(colors[i])
+        
         # Render the scene
         data = bproc.renderer.render()
         final_data["colors"] += data["colors"]
-        
+
+    # Save or process the final_data as needed
     save_images(final_data, args.output_dir, args.run)
 
         
-
-
-
 if __name__ == "__main__":
     main()
