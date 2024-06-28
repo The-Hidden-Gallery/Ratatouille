@@ -42,6 +42,6 @@ def main(object_file, output_file):
     save_image(data, output_file)
 
 if __name__ == "__main__":
-    object_file = r"\Raw_objects\Monkey.obj"
+    object_file = r"\assets\Raw_objects\Monkey.obj"
     output_file = r"\output_imgs\000001.png"
     main(object_file, output_file)

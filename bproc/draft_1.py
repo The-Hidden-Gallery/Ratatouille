@@ -162,7 +162,7 @@ def save_images(data:dict, output_file:str = "output_imgs/", run:str = None) -> 
         except:
             pass
         
-    img_array = data["colors"]
+    img_array = data["colors"] + data["segmap"]
     output_file = output_file + '/'
     print(output_file)
     for i in range(len(img_array)):
@@ -183,7 +183,7 @@ def main():
 
     # Set working directories
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    object_file = r"\Raw_objects\Monkey.obj"
+    object_file = r"\assets\Raw_objects\Monkey.obj"
 
     # Load the .blend file containing the sample object (Monkey.obj)
     obj = bproc.loader.load_obj(current_dir + object_file)[0]
@@ -204,7 +204,7 @@ def main():
     poi = bproc.object.compute_poi([obj])
 
     # Sample five camera poses and render each with a unique combination of object position and table color
-    final_data = {"colors": []}
+    final_data = {"colors": [], "segmap": []}
     for i in range(5):
         # Sample random camera location above objects
         location = np.random.uniform([0, 0, 8], [10, 10, 12])
@@ -223,7 +223,11 @@ def main():
         
         # Render the scene
         data = bproc.renderer.render()
+        input(data.keys())
         final_data["colors"] += data["colors"]
+        final_data["segmap"] += data["segmap"]
+    
+
 
     # Save or process the final_data as needed
     save_images(final_data, args.output_dir, args.run)
