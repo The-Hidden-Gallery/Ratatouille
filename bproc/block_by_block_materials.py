@@ -95,7 +95,67 @@ def create_background(back_data: dict, mods_dict: dict):
     else:
         plane.data.materials.append(mat)
 
-def create_galvanizedsteel(back_data: dict, mods_dict: dict, material_name: str = "MetalGalvanizedSteelWorn001", path: str):
+def Material_output_node(nodes)-> bpy.types.Node:
+    """
+    Creates a material output node
+    """
+    new_node = nodes.new(type='ShaderNodeOutputMaterial')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.is_active_output = True
+    new_node.location = (300.0, 300.0)
+    new_node.name = 'Material Output'
+    new_node.select = False
+    new_node.target = 'ALL'
+    new_node.width = 140.0
+    new_node.inputs[2].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[3].default_value = 0.0
+
+    return new_node
+
+def Principled_BSDF_node(nodes)-> bpy.types.Node:
+    """
+    Creates a principled BSDF node
+    """
+    new_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.distribution = 'GGX'
+    new_node.location = (-50.0, 300.0)
+    new_node.name = 'Principled BSDF'
+    new_node.select = False
+    new_node.subsurface_method = 'RANDOM_WALK_SKIN'
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.inputs[1].default_value = 0.0
+    new_node.inputs[2].default_value = 0.5
+    new_node.inputs[3].default_value = 1.5
+    new_node.inputs[4].default_value = 1.0
+    new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[6].default_value = 0.0
+    new_node.inputs[7].default_value = 0.0
+    new_node.inputs[8].default_value = [1.0, 0.20000000298023224, 0.10000000149011612]
+    new_node.inputs[9].default_value = 0.05000000074505806
+    new_node.inputs[10].default_value = 1.399999976158142
+    new_node.inputs[11].default_value = 0.0
+    new_node.inputs[12].default_value = 0.5
+    new_node.inputs[13].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[14].default_value = 0.0
+    new_node.inputs[15].default_value = 0.0
+    new_node.inputs[16].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[17].default_value = 0.0
+    new_node.inputs[18].default_value = 0.0
+    new_node.inputs[19].default_value = 0.029999999329447746
+    new_node.inputs[20].default_value = 1.5
+    new_node.inputs[21].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[22].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[23].default_value = 0.0
+    new_node.inputs[24].default_value = 0.5
+    new_node.inputs[25].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[26].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[27].default_value = 0.0
+
+    return new_node
+
+def create_galvanizedsteel(back_data: dict, mods_dict: dict, material_name: str = "MetalGalvanizedSteelWorn001", path: str = None):
     """
     Creates galvanized steel material as in the Poliigon Add-on for blender
 
@@ -144,7 +204,10 @@ def create_galvanizedsteel(back_data: dict, mods_dict: dict, material_name: str 
     new_node.name = 'COL'
     new_node.image = bpy.data.images.load(texture_path)
 
-
+    
+    new_node = Material_output_node(nodes)
+    new_node = Principled_BSDF_node(nodes)
+    
     # Create necessary nodes and adjust values
     principled_node = nodes.new(type="ShaderNodeBsdfPrincipled")
     principled_node.inputs["Specular"].default_value = 0.25
@@ -256,17 +319,6 @@ def create_material_script():
     new_node.inputs[25].default_value = [1.0, 1.0, 1.0, 1.0]
     new_node.inputs[26].default_value = [1.0, 1.0, 1.0, 1.0]
     new_node.inputs[27].default_value = 0.0
-
-    new_node = nodes.new(type='ShaderNodeOutputMaterial')
-    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
-    new_node.is_active_output = True
-    new_node.location = (300.0, 300.0)
-    new_node.name = 'Material Output'
-    new_node.select = False
-    new_node.target = 'ALL'
-    new_node.width = 140.0
-    new_node.inputs[2].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[3].default_value = 0.0
 
     new_node = nodes.new(type='NodeFrame')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
