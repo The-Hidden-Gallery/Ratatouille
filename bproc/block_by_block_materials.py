@@ -186,7 +186,6 @@ def create_galvanizedsteel(back_data: dict, mods_dict: dict, material_name: str 
         bpy.path.abspath("//"),
         "assets",
         "Raw_materials",
-        "OGs",
         material_name,
     )
 
@@ -588,7 +587,7 @@ def main(object_file, output_file):
     input(background_mat_root)
     # Create a material for the obj
     # material = create_material()
-    material = create_material_script()
+    material = create_galvanizedsteel({}, {}, material_name, background_mat_root)
     obj.data.materials.append(material)
 
 
