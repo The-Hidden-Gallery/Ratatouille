@@ -95,21 +95,17 @@ def create_background(back_data: dict, mods_dict: dict):
     else:
         plane.data.materials.append(mat)
 
-def create_material(back_data: dict, mods_dict: dict, material_name: str):
+def create_galvanizedsteel(back_data: dict, mods_dict: dict, material_name: str = "MetalGalvanizedSteelWorn001", path: str):
     """
-    Creates a background plane in the Blender scene and applies a texture and normal map
-    to it.
- 
-    This function creates a plane named "Background" in the Blender scene if it doesn't
-    exist already. It then creates a new material named "Background_Material" and sets
-    up nodes to use the specified texture and normal map files to create a textured sur-
-    face on the plane.
+    Creates galvanized steel material as in the Poliigon Add-on for blender
+
+    This function requires having the file containing the information regarding the Poliigon Material 
  
     Args:
-        data (dict): A dictionary containing info about the position or scale of the
-        plane background.
-        mods_dict (dict): The dictionary with the info about what to modify according to
-        the blueprint
+        path (str): Indicates the path to the material with the files needed 
+    
+    Returns: 
+        mat : GalvanizedSteel by poliigon 
     """
  
     # New background material
@@ -121,7 +117,34 @@ def create_material(back_data: dict, mods_dict: dict, material_name: str):
     # Clear default nodes
     for node in nodes:
         nodes.remove(node)
- 
+    
+    # Try the Galvanized one 
+
+    # Define the route to the file 
+    background_mat = mods_dict["background_material"]
+    path_to_material = os.path.join(
+        bpy.path.abspath("//"),
+        "assets",
+        "Raw_materials",
+        "OGs",
+        material_name,
+    )
+
+    texture_COL_path = os.path.join(
+        path_to_material,
+        ".png",
+    )
+
+    # Lo llamamos new_node a todos, y luego los seleccionamos por el nombre o por el label 
+    new_node = nodes.new(type='ShadernodeTexImage')
+    new_node.extension = 'REPEAT'
+    new_node.interpolation = 'Linear'
+    new_node.label = 'COL'
+    new_node.location = (-650.0, 300.0)
+    new_node.name = 'COL'
+    new_node.image = bpy.data.images.load(texture_path)
+
+
     # Create necessary nodes and adjust values
     principled_node = nodes.new(type="ShaderNodeBsdfPrincipled")
     principled_node.inputs["Specular"].default_value = 0.25
@@ -164,6 +187,21 @@ def create_material(back_data: dict, mods_dict: dict, material_name: str):
     links.new(normals_image_node.outputs["Color"], normals_node.inputs["Color"])
     links.new(normals_node.outputs["Normal"], principled_node.inputs["Normal"])
     links.new(principled_node.outputs["BSDF"], output_node.inputs["Surface"])
+
+    # Links :
+
+    links.new(nodes["Principled BSDF"].outputs[0], nodes["Material Output"].inputs[0])    
+    links.new(nodes["COL"].outputs[0], nodes["Principled BSDF"].inputs[0])    
+    links.new(nodes["METALNESS"].outputs[0], nodes["Principled BSDF"].inputs[1])    
+    links.new(nodes["NRM16"].outputs[0], nodes["Normal Map"].inputs[1])    
+    links.new(nodes["Normal Map"].outputs[0], nodes["Principled BSDF"].inputs[5])    
+    links.new(nodes["COL"].outputs[1], nodes["Principled BSDF"].inputs[4])    
+    links.new(nodes["ROUGHNESS"].outputs[0], nodes["Principled BSDF"].inputs[2])    
+    links.new(nodes["Texture Coordinate"].outputs[2], nodes[".simple_uv_mapping"].inputs[0])    
+    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["COL"].inputs[0])    
+    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["METALNESS"].inputs[0])    
+    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["NRM16"].inputs[0])    
+    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["ROUGHNESS"].inputs[0])
  
     return mat 
 
