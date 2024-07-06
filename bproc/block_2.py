@@ -168,87 +168,79 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
         mat : GalvanizedSteel by poliigon 
     """
  
-    # New background material
-    mat = bpy.data.materials.new(name=material_name)
-    mat.use_nodes = True
-    nodes = mat.node_tree.nodes
-    links = mat.node_tree.links
- 
-    # Clear default nodes
-    for node in nodes:
-        nodes.remove(node)
-    
-    # Try the Galvanized one 
+    new_mat = bpy.data.materials.new('MetalGalvanizedSteelWorn001_1K')
+        
+    new_mat.use_nodes = True
+    node_tree = new_mat.node_tree
+    nodes = node_tree.nodes
+    nodes.clear()
+        
+    links = node_tree.links
+    links.clear()
+        
+    # Nodes :
 
-    # Define the route to the file 
-    path_to_material = os.path.join(
-        bpy.path.abspath("//"),
-        "/assets",
-        "Raw_materials",
-        "Dishes",
-        material_name,
-    )
-
-    texture_COL_path = os.path.join(
-        path_to_material,
-        ".png",
-    )
-
-    # Texture coordinate node (1)
-    new_node = nodes.new(type='ShaderNodeTexCoord')
+    new_node = nodes.new(type='ShaderNodeBsdfPrincipled')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
-    new_node.from_instancer = False
-    new_node.location = (-1250.0, 300.0)
-    new_node.name = 'Texture Coordinate'
-    # --- Possible unnecessary ---
-    # new_node.object = None
-    # new_node.select = False
-    # new_node.width = 140.0
-    # new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[1].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[2].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[3].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[4].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[5].default_value = [0.0, 0.0, 0.0]
-    # new_node.outputs[6].default_value = [0.0, 0.0, 0.0]
+    new_node.distribution = 'GGX'
+    new_node.location = (-50.0, 300.0)
+    new_node.name = 'Principled BSDF'
+    new_node.select = False
+    new_node.subsurface_method = 'RANDOM_WALK'
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.inputs[1].default_value = 0.0
+    new_node.inputs[2].default_value = 0.5
+    new_node.inputs[3].default_value = 1.5
+    new_node.inputs[4].default_value = 1.0
+    new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[6].default_value = 0.0
+    new_node.inputs[7].default_value = 0.0
+    new_node.inputs[8].default_value = [1.0, 0.20000000298023224, 0.10000000149011612]
+    new_node.inputs[9].default_value = 0.05000000074505806
+    new_node.inputs[10].default_value = 1.399999976158142
+    new_node.inputs[11].default_value = 0.0
+    new_node.inputs[12].default_value = 0.5
+    new_node.inputs[13].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[14].default_value = 0.0
+    new_node.inputs[15].default_value = 0.0
+    new_node.inputs[16].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[17].default_value = 0.0
+    new_node.inputs[18].default_value = 0.0
+    new_node.inputs[19].default_value = 0.029999999329447746
+    new_node.inputs[20].default_value = 1.5
+    new_node.inputs[21].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[22].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[23].default_value = 0.0
+    new_node.inputs[24].default_value = 0.5
+    new_node.inputs[25].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[26].default_value = [1.0, 1.0, 1.0, 1.0]
+    new_node.inputs[27].default_value = 0.0
 
-    # Simple UV Mapping node (2)
-    new_node = nodes.new(type='ShaderNodeGroup')
+    new_node = nodes.new(type='ShaderNodeOutputMaterial')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
-    new_node.label = '.simple_uv_mapping'
-    new_node.location = (-1000.0, 300.0)
-    new_node.name = '.simple_uv_mapping'
-    ng = bpy.data.node_groups.get('.simple_uv_mapping')
-    if not ng:
-        new_node.label = "Missing Node Group : '.simple_uv_mapping'"
-    else:
-        new_node.node_tree = ng
-        # --- Possible unnecessary ---                
-        new_node.select = False
-        new_node.width = 250.0
-        print(len(new_node.inputs))
-        new_node.inputs[0].default_value = 1.0
-        new_node.inputs[1].default_value = 0.0
-        new_node.inputs[2].default_value = 0.0
-        new_node.inputs[3].default_value = 0.0
-        new_node.inputs[4].default_value = 1.0
+    new_node.is_active_output = True
+    new_node.location = (300.0, 300.0)
+    new_node.name = 'Material Output'
+    new_node.select = False
+    new_node.target = 'ALL'
+    new_node.width = 140.0
+    new_node.inputs[2].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[3].default_value = 0.0
 
-    
+    new_node = nodes.new(type='NodeFrame')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.label = 'Textures'
+    new_node.label_size = 20
+    new_node.location = (0.0, 0.0)
+    new_node.name = 'Textures'
+    new_node.select = False
+    new_node.width = 300.0000305175781
 
-    # Texture COL node (3)
-    # Image path
-    relative_path = "assets\Raw_materials\Dishes\MetalGalvanizedSteelWorn001\MetalGalvanizedSteelWorn001_COL_2K_METALNESS.jpg"
-    texture_COL_path = os.path.join(
-        path_to_material,
-        material_name + "_COL_2K_METALNESS.jpg",
-    )
-    texture_COL_path = r"C:\Users\javir\EVERYTHING\WORK\ICAI\Aria\Ratatouille\Ratatouille\bproc\assets\Raw_materials\Dishes\MetalGalvanizedSteelWorn001\MetalGalvanizedSteelWorn001_COL_2K_METALNESS.jpg"
-    
     new_node = nodes.new(type='ShaderNodeTexImage')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
-    image = bpy.data.images.load(texture_COL_path)
-    new_node.image = image
+    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_COL_1K_METALNESS')
     img_text = new_node.image_user
     img_text.frame_current = 0
     img_text.frame_duration = 100
@@ -278,72 +270,154 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
     new_node.outputs[1].default_value = 0.0
 
-
-    # Texture METALNESS node (4)
-    
-
-
-
-
-
-
-
-    # Lo llamamos new_node a todos, y luego los seleccionamos por el nombre o por el label 
     new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_METALNESS_1K_METALNESS')
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
     new_node.interpolation = 'Linear'
-    new_node.label = 'COL'
-    new_node.location = (-650.0, 300.0)
-    new_node.name = 'COL'
-    new_node.image = bpy.data.images.load(texture_path)
+    new_node.label = 'METALNESS'
+    new_node.location = (-650.0, -50.0)
+    new_node.name = 'METALNESS'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
 
-    
-    new_node = Material_output_node(nodes)
-    new_node = Principled_BSDF_node(nodes)
-    
-    # Create necessary nodes and adjust values
-    principled_node = nodes.new(type="ShaderNodeBsdfPrincipled")
-    principled_node.inputs["Specular"].default_value = 0.25
-    principled_node.inputs["Roughness"].default_value = 0.25
-    principled_node.inputs["Metallic"].default_value = 0.8
-    texture_node = nodes.new(type="ShaderNodeTexImage")
-    normals_node = nodes.new(type="ShaderNodeNormalMap")
-    normals_node.inputs["Strength"].default_value = 0.5
-    normals_image_node = nodes.new(type="ShaderNodeTexImage")
-    output_node = nodes.new(type="ShaderNodeOutputMaterial")
- 
-    # Set node locations to prevent overlapping
-    principled_node.location = (200, 300)
-    texture_node.location = (-300, 300)
-    normals_node.location = (0, -50)
-    normals_image_node.location = (-300, -50)
-    output_node.location = (500, 300)
- 
-    background_mat_root = os.path.join(
-        bpy.path.abspath("//"),
-        "assets",
-        "textures",
-        "backgrounds",
-        material_name,
-    )
-    texture_path = os.path.join(
-        background_mat_root,
-        "texture.png",
-    )
-    normals_path = os.path.join(
-        background_mat_root,
-        "normals.png",
-    )
-    texture_node.image = bpy.data.images.load(texture_path)
-    normals_image_node.image = bpy.data.images.load(normals_path)
- 
-    # Link nodes by input name 
-    # links.new(texture_node.outputs["Color"], principled_node.inputs["Base Color"])
-    # links.new(normals_image_node.outputs["Color"], normals_node.inputs["Color"])
-    # links.new(normals_node.outputs["Normal"], principled_node.inputs["Normal"])
-    # links.new(principled_node.outputs["BSDF"], output_node.inputs["Surface"])
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_NRM16_1K_METALNESS')
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'NRM16'
+    new_node.location = (-650.0, -750.0)
+    new_node.name = 'NRM16'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
 
-    # Links nodes by name and position
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_ROUGHNESS_1K_METALNESS')
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'ROUGHNESS'
+    new_node.location = (-650.0, -400.0)
+    new_node.name = 'ROUGHNESS'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    new_node = nodes.new(type='ShaderNodeNormalMap')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.location = (-300.0, -750.0)
+    new_node.name = 'Normal Map'
+    new_node.select = False
+    new_node.space = 'TANGENT'
+    new_node.width = 150.0
+    new_node.inputs[0].default_value = 1.0
+    new_node.inputs[1].default_value = [0.5, 0.5, 1.0, 1.0]
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
+
+    new_node = nodes.new(type='ShaderNodeTexCoord')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.from_instancer = False
+    new_node.location = (-1250.0, 300.0)
+    new_node.name = 'Texture Coordinate'
+    new_node.object = None
+    new_node.select = False
+    new_node.width = 140.0
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[1].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[2].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[3].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[4].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[5].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[6].default_value = [0.0, 0.0, 0.0]
+
+    new_node = nodes.new(type='ShaderNodeGroup')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.label = '.simple_uv_mapping'
+    new_node.location = (-1000.0, 300.0)
+    new_node.name = '.simple_uv_mapping'
+    ng = bpy.data.node_groups.get('.simple_uv_mapping')
+    if not ng:
+        new_node.label = "Missing Node Group : '.simple_uv_mapping'"
+    else:
+        new_node.node_tree = ng                
+    new_node.select = False
+    new_node.width = 250.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[1].default_value = 1.0
+    new_node.inputs[2].default_value = 0.0
+    new_node.inputs[3].default_value = 0.0
+    new_node.inputs[4].default_value = 0.0
+    new_node.inputs[5].default_value = 1.0
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
+
+    # Links :
+
     links.new(nodes["Principled BSDF"].outputs[0], nodes["Material Output"].inputs[0])    
     links.new(nodes["COL"].outputs[0], nodes["Principled BSDF"].inputs[0])    
     links.new(nodes["METALNESS"].outputs[0], nodes["Principled BSDF"].inputs[1])    
@@ -355,9 +429,10 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["COL"].inputs[0])    
     links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["METALNESS"].inputs[0])    
     links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["NRM16"].inputs[0])    
-    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["ROUGHNESS"].inputs[0])
- 
-    return mat 
+    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["ROUGHNESS"].inputs[0])    
+    
+
+    return new_mat
 
 def create_material_script():
     new_mat = bpy.data.materials.get('MetalGalvanizedSteelWorn001_2K')
