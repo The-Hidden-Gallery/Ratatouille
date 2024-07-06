@@ -180,14 +180,16 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     
     # Try the Galvanized one 
 
+    
+    current_directory = os.getcwd()
     # Define the route to the file 
     path_to_material = os.path.join(
-        bpy.path.abspath("//"),
-        "/assets",
+        "assets",
         "Raw_materials",
         "Dishes",
         material_name,
     )
+    path_to_material = os.path.join(current_directory, path_to_material)
 
     texture_COL_path = os.path.join(
         path_to_material,
@@ -237,18 +239,14 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
 
     # Texture COL node (3)
     # Image path
-    relative_path = "assets\Raw_materials\Dishes\MetalGalvanizedSteelWorn001\MetalGalvanizedSteelWorn001_COL_2K_METALNESS.jpg"
     texture_COL_path = os.path.join(
         path_to_material,
         material_name + "_COL_2K_METALNESS.jpg",
     )
-    texture_COL_path = r"C:\Users\javir\EVERYTHING\WORK\ICAI\Aria\Ratatouille\Ratatouille\bproc\assets\Raw_materials\Dishes\MetalGalvanizedSteelWorn001\MetalGalvanizedSteelWorn001_COL_2K_METALNESS.jpg"
-    
     new_node = nodes.new(type='ShaderNodeTexImage')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
-    image = bpy.data.images.load(texture_COL_path)
-    new_node.image = image
+    new_node.image = bpy.data.images.load(texture_COL_path)
     img_text = new_node.image_user
     img_text.frame_current = 0
     img_text.frame_duration = 100
@@ -280,7 +278,38 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
 
 
     # Texture METALNESS node (4)
-    
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_METALNESS_1K_METALNESS')
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'METALNESS'
+    new_node.location = (-650.0, -50.0)
+    new_node.name = 'METALNESS'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
 
 
 
