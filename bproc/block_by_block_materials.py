@@ -116,8 +116,16 @@ def Principled_BSDF_node(nodes)-> bpy.types.Node:
     """
     Creates a principled BSDF node
     """
-    
+    type_to_type = {"<class 'bpy.types.NodeSocketVector'>" : "Vector",
+                    "<class 'bpy.types.NodeSocketColor'>" : "Color",
+                    "<class 'bpy.types.NodeSocketShader'>" : "Shader",
+                    "<class 'bpy.types.NodeSocketFloatFactor'>" : "Float",
+                    "<class 'bpy.types.NodeSocketFloat'>" : "Float",
+                    "<class 'bpy.types.NodeSocketInt'>" : "Int",
+    }
     new_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+    for input in new_node.inputs:
+        print(f"{input.name} has type {type_to_type[str(type(input))]}")
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.distribution = 'GGX'
     new_node.location = (-50.0, 300.0)
@@ -125,34 +133,11 @@ def Principled_BSDF_node(nodes)-> bpy.types.Node:
     new_node.select = False
     new_node.subsurface_method = 'RANDOM_WALK'
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.inputs[1].default_value = 0.0
-    new_node.inputs[2].default_value = [0.5, 0.5, 0.5]
-    new_node.inputs[3].default_value = 1.5
-    new_node.inputs[4].default_value = 1.0
-    new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[6].default_value = 0.0
-    new_node.inputs[7].default_value = 0.0
-    new_node.inputs[8].default_value = [1.0, 0.20000000298023224, 0.10000000149011612]
-    new_node.inputs[9].default_value = 0.05000000074505806
-    new_node.inputs[10].default_value = 1.399999976158142
-    new_node.inputs[11].default_value = 0.0
-    new_node.inputs[12].default_value = 0.5
-    new_node.inputs[13].default_value = [1.0, 1.0, 1.0, 1.0]
-    new_node.inputs[14].default_value = 0.0
-    new_node.inputs[15].default_value = 0.0
-    new_node.inputs[16].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[17].default_value = 0.0
-    new_node.inputs[18].default_value = 0.0
-    new_node.inputs[19].default_value = 0.029999999329447746
-    new_node.inputs[20].default_value = 1.5
-    new_node.inputs[21].default_value = [1.0, 1.0, 1.0, 1.0]
-    new_node.inputs[22].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[23].default_value = 0.0
-    new_node.inputs[24].default_value = 0.5
-    new_node.inputs[25].default_value = [1.0, 1.0, 1.0, 1.0]
-    new_node.inputs[26].default_value = [1.0, 1.0, 1.0, 1.0]
-    new_node.inputs[27].default_value = 0.0
+    new_node.inputs["IOR"].default_value = 1.5
+    new_node.inputs["Weight"].default_value = 0.0
+    new_node.inputs["Anisotropy"].default_value = 0.0
+    new_node.inputs["Base Color"].default_value = [0.5,0.5,0.5]
+
 
     return new_node
 
