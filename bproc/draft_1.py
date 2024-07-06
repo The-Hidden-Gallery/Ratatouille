@@ -220,12 +220,15 @@ def main():
         # Update table color
         table.data.materials.clear()
         table.data.materials.append(colors[i])
+        print(type(table))
+        input(type(colors[i]))
         
         # Render the scene
         data = bproc.renderer.render()
-        input(data.keys())
         final_data["colors"] += data["colors"]
-        final_data["segmap"] += data["segmap"]
+        # segmap is not being found in the data dictionary
+        # final_data["segmap"] += data["segmap"] 
+
     
 
 

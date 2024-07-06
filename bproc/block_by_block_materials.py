@@ -116,16 +116,7 @@ def Principled_BSDF_node(nodes)-> bpy.types.Node:
     """
     Creates a principled BSDF node
     """
-    type_to_type = {"<class 'bpy.types.NodeSocketVector'>" : "Vector",
-                    "<class 'bpy.types.NodeSocketColor'>" : "Color",
-                    "<class 'bpy.types.NodeSocketShader'>" : "Shader",
-                    "<class 'bpy.types.NodeSocketFloatFactor'>" : "Float",
-                    "<class 'bpy.types.NodeSocketFloat'>" : "Float",
-                    "<class 'bpy.types.NodeSocketInt'>" : "Int",
-    }
     new_node = nodes.new(type='ShaderNodeBsdfPrincipled')
-    for input in new_node.inputs:
-        print(f"{input.name} has type {type_to_type[str(type(input))]}")
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.distribution = 'GGX'
     new_node.location = (-50.0, 300.0)
@@ -135,8 +126,7 @@ def Principled_BSDF_node(nodes)-> bpy.types.Node:
     new_node.width = 240.0
     new_node.inputs["IOR"].default_value = 1.5
     new_node.inputs["Weight"].default_value = 0.0
-    new_node.inputs["Anisotropy"].default_value = 0.0
-    new_node.inputs["Base Color"].default_value = [0.5,0.5,0.5]
+    new_node.inputs["Anisotropic"].default_value = 0.0
 
 
     return new_node
@@ -207,19 +197,19 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     new_node.location = (-1000.0, 300.0)
     new_node.name = '.simple_uv_mapping'
     ng = bpy.data.node_groups.get('.simple_uv_mapping')
-    if not ng:
-        new_node.label = "Missing Node Group : '.simple_uv_mapping'"
-    else:
-        new_node.node_tree = ng
-        # --- Possible unnecessary ---                
-        new_node.select = False
-        new_node.width = 250.0
-        print(len(new_node.inputs))
-        new_node.inputs[0].default_value = 1.0
-        new_node.inputs[1].default_value = 0.0
-        new_node.inputs[2].default_value = 0.0
-        new_node.inputs[3].default_value = 0.0
-        new_node.inputs[4].default_value = 1.0
+    # if not ng:
+    #     new_node.label = "Missing Node Group : '.simple_uv_mapping'"
+    # else:
+    #     new_node.node_tree = ng
+    #     # --- Possible unnecessary ---                
+    #     new_node.select = False
+    #     new_node.width = 250.0
+    #     print(len(new_node.inputs))
+    #     new_node.inputs[0].default_value = 1.0
+    #     new_node.inputs[1].default_value = 0.0
+    #     new_node.inputs[2].default_value = 0.0
+    #     new_node.inputs[3].default_value = 0.0
+    #     new_node.inputs[4].default_value = 1.0
 
     
 
@@ -420,13 +410,13 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     links.new(nodes["NRM16"].outputs[0], nodes["Normal Map"].inputs[1])    
     links.new(nodes["Normal Map"].outputs[0], nodes["Principled BSDF"].inputs[5])    
     links.new(nodes["COL"].outputs[1], nodes["Principled BSDF"].inputs[4])    
-    links.new(nodes["ROUGHNESS"].outputs[0], nodes["Principled BSDF"].inputs[2])    
-    links.new(nodes["Texture Coordinate"].outputs[2], nodes[".simple_uv_mapping"].inputs[0])    
-    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["COL"].inputs[0])    
-    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["METALNESS"].inputs[0])    
-    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["NRM16"].inputs[0])    
-    links.new(nodes[".simple_uv_mapping"].outputs[0], nodes["ROUGHNESS"].inputs[0])
- 
+    links.new(nodes["ROUGHNESS"].outputs[0], nodes["Principled BSDF"].inputs[2])   
+    # links.new(nodes["Texture Coordinate"].outputs[2], nodes[".simple_uv_mapping"].inputs[0])    
+    links.new(nodes["Texture Coordinate"].outputs[2], nodes["COL"].inputs[0])    
+    links.new(nodes["Texture Coordinate"].outputs[2], nodes["METALNESS"].inputs[0])    
+    links.new(nodes["Texture Coordinate"].outputs[2], nodes["NRM16"].inputs[0])    
+    links.new(nodes["Texture Coordinate"].outputs[2], nodes["ROUGHNESS"].inputs[0])
+    
     return mat 
 
 def create_material_script():
@@ -747,7 +737,11 @@ def main(object_file, output_file):
     )
     # Create a material for the objeect
     galvanizedsteel = create_galvanizedsteel(imgs_path = background_mat_root, material_name = material_name)
-    obj.data.materials.append(galvanizedsteel)
+    print(type(galvanizedsteel))
+    input(type(obj))
+    obj.blender_obj.data.materials.append(galvanizedsteel)
+    #obj.replace_materials([galvanizedsteel])
+    #obj.data.materials.append(galvanizedsteel)
 
     # Render the scene
     data = bproc.renderer.render()
