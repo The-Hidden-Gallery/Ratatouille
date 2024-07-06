@@ -116,17 +116,18 @@ def Principled_BSDF_node(nodes)-> bpy.types.Node:
     """
     Creates a principled BSDF node
     """
+    
     new_node = nodes.new(type='ShaderNodeBsdfPrincipled')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.distribution = 'GGX'
     new_node.location = (-50.0, 300.0)
     new_node.name = 'Principled BSDF'
     new_node.select = False
-    new_node.subsurface_method = 'RANDOM_WALK_SKIN'
+    new_node.subsurface_method = 'RANDOM_WALK'
     new_node.width = 240.0
     new_node.inputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
     new_node.inputs[1].default_value = 0.0
-    new_node.inputs[2].default_value = 0.5
+    new_node.inputs[2].default_value = [0.5, 0.5, 0.5]
     new_node.inputs[3].default_value = 1.5
     new_node.inputs[4].default_value = 1.0
     new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
@@ -278,10 +279,15 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
 
 
     # Texture METALNESS node (4)
+    # Image path
+    texture_METALNESS_path = os.path.join(
+        path_to_material,
+        material_name + "_METALNESS_2K_METALNESS.jpg",
+    )
     new_node = nodes.new(type='ShaderNodeTexImage')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
-    new_node.image = bpy.data.images.get('MetalGalvanizedSteelWorn001_METALNESS_1K_METALNESS')
+    new_node.image = bpy.data.images.load(texture_METALNESS_path)
     img_text = new_node.image_user
     img_text.frame_current = 0
     img_text.frame_duration = 100
@@ -311,60 +317,110 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
     new_node.outputs[1].default_value = 0.0
 
-
-
-
-
-
-
-    # Lo llamamos new_node a todos, y luego los seleccionamos por el nombre o por el label 
+    # Texture ROUGHNESS node (5)
+    # Image path
+    texture_ROUGHNESS_path = os.path.join(
+        path_to_material,
+        material_name + "_ROUGHNESS_2K_METALNESS.jpg",
+    )
     new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_ROUGHNESS_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
     new_node.interpolation = 'Linear'
-    new_node.label = 'COL'
-    new_node.location = (-650.0, 300.0)
-    new_node.name = 'COL'
-    new_node.image = bpy.data.images.load(texture_path)
+    new_node.label = 'ROUGHNESS'
+    new_node.location = (-650.0, -400.0)
+    new_node.name = 'ROUGHNESS'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
 
+    # Texture NRM16 node (6)
+    # Image path
+    texture_NRM16_path = os.path.join(
+        path_to_material,
+        material_name + "_NRM16_2K_METALNESS.tif",
+    )
+    # texture_NRM16_path = os.path.join(
+    #     path_to_material,
+    #     material_name + "_NRM_2K_METALNESS.jpg",
+    # )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_NRM16_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'NRM16'
+    new_node.location = (-650.0, -750.0)
+    new_node.name = 'NRM16'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+
+    # Normal Map node (7)
+    new_node = nodes.new(type='ShaderNodeNormalMap')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.location = (-300.0, -750.0)
+    new_node.name = 'Normal Map'
+    new_node.select = False
+    new_node.space = 'TANGENT'
+    new_node.width = 150.0
+    new_node.inputs[0].default_value = 1.0
+    new_node.inputs[1].default_value = [0.5, 0.5, 1.0, 1.0]
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
     
-    new_node = Material_output_node(nodes)
+    # Principled BSDF node (8)
     new_node = Principled_BSDF_node(nodes)
+
+    # Material output node (9)
+    new_node = Material_output_node(nodes)
     
-    # Create necessary nodes and adjust values
-    principled_node = nodes.new(type="ShaderNodeBsdfPrincipled")
-    principled_node.inputs["Specular"].default_value = 0.25
-    principled_node.inputs["Roughness"].default_value = 0.25
-    principled_node.inputs["Metallic"].default_value = 0.8
-    texture_node = nodes.new(type="ShaderNodeTexImage")
-    normals_node = nodes.new(type="ShaderNodeNormalMap")
-    normals_node.inputs["Strength"].default_value = 0.5
-    normals_image_node = nodes.new(type="ShaderNodeTexImage")
-    output_node = nodes.new(type="ShaderNodeOutputMaterial")
+    
+
  
-    # Set node locations to prevent overlapping
-    principled_node.location = (200, 300)
-    texture_node.location = (-300, 300)
-    normals_node.location = (0, -50)
-    normals_image_node.location = (-300, -50)
-    output_node.location = (500, 300)
- 
-    background_mat_root = os.path.join(
-        bpy.path.abspath("//"),
-        "assets",
-        "textures",
-        "backgrounds",
-        material_name,
-    )
-    texture_path = os.path.join(
-        background_mat_root,
-        "texture.png",
-    )
-    normals_path = os.path.join(
-        background_mat_root,
-        "normals.png",
-    )
-    texture_node.image = bpy.data.images.load(texture_path)
-    normals_image_node.image = bpy.data.images.load(normals_path)
  
     # Link nodes by input name 
     # links.new(texture_node.outputs["Color"], principled_node.inputs["Base Color"])
