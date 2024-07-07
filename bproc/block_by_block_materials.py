@@ -198,12 +198,12 @@ def create_galvanizedsteel(imgs_path: str = None, material_name: str = "MetalGal
     
 
     # Simple UV Mapping node (2)
-    new_node = nodes.new(type='ShaderNodeGroup')
-    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
-    new_node.label = '.simple_uv_mapping'
-    new_node.location = (-1000.0, 300.0)
-    new_node.name = '.simple_uv_mapping'
     # --- Possible unnecessary ---
+    # new_node = nodes.new(type='ShaderNodeGroup')
+    # new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    # new_node.label = '.simple_uv_mapping'
+    # new_node.location = (-1000.0, 300.0)
+    # new_node.name = '.simple_uv_mapping'
     # ng = bpy.data.node_groups.get('.simple_uv_mapping')
     # if not ng:
     #     new_node.label = "Missing Node Group : '.simple_uv_mapping'"
@@ -454,14 +454,366 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     # Texture coordinate node (1)
     new_node = texture_coordinate_node(nodes)
 
-    # Simple UV Mapping node (2)
-    new_node = nodes.new(type='ShaderNodeGroup')
+    # Texture COL node (2)
+    # Image path
+    texture_COL_path = os.path.join(
+        path_to_material,
+        material_name + "_COL_2K.jpg",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
-    new_node.label = '.simple_uv_mapping'
-    new_node.location = (-1000.0, 300.0)
-    new_node.name = '.simple_uv_mapping'
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_COL_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0
+    new_node.interpolation = 'Linear'
+    new_node.label = 'COL'
+    new_node.location = (-650.0, 300.0)
+    new_node.name = 'COL'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
 
+    # Texture AO node (3)
+    # Image path
+    texture_AO_path = os.path.join(
+        path_to_material,
+        material_name + "_AO_2K.jpg",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_AO_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0
+    new_node.interpolation = 'Linear'
+    new_node.label = 'AO'
+    new_node.location = (-650.0, -50.0)
+    new_node.name = 'AO'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # Texture REFL node (4)
+    # Image path
+    texture_REFL_path = os.path.join(
+        path_to_material,
+        material_name + "_REFL_2K.jpg",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_REFL_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0
+    new_node.interpolation = 'Linear'
+    new_node.label = 'REFL'
+    new_node.location = (-650.0, -400.0)
+    new_node.name = 'REFL'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # Texture GLOSS node (5)
+    # Image path
+    texture_GLOSS_path = os.path.join(
+        path_to_material,
+        material_name + "_GLOSS_2K.jpg",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_GLOSS_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0
+    new_node.interpolation = 'Linear'
+    new_node.label = 'GLOSS'
+    new_node.location = (-650.0, -750.0)
+    new_node.name = 'GLOSS'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # Texture NRM node (6)
+    # Image path
+    texture_NRM_path = os.path.join(
+        path_to_material,
+        material_name + "_NRM_2K.png",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_NRM_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'NRM'
+    new_node.location = (-650.0, -1100.0)
+    new_node.name = 'NRM'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # Texture DISP node (7)
+    # Image path
+    texture_DISP_path = os.path.join(
+        path_to_material,
+        material_name + "_DISP16_2K.tif",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_DISP_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Cubic'
+    new_node.label = 'DISP16'
+    new_node.location = (-650.0, -1450.0)
+    new_node.name = 'DISP16'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # Texture BUMP node (8)
+    # Image path
+    texture_BUMP_path = os.path.join(
+        path_to_material,
+        material_name + "_BUMP16_2K.tif",
+    )
+    new_node = nodes.new(type='ShaderNodeTexImage')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.extension = 'REPEAT'
+    new_node.image = bpy.data.images.load(texture_BUMP_path)
+    img_text = new_node.image_user
+    img_text.frame_current = 0
+    img_text.frame_duration = 100
+    img_text.frame_offset = 0
+    img_text.frame_start = 1
+    img_text.use_auto_refresh = False
+    img_text.use_cyclic = False
+    img_text.tile = 0                
+    new_node.interpolation = 'Linear'
+    new_node.label = 'BUMP16'
+    new_node.location = (-650.0, -1800.0)
+    new_node.name = 'BUMP16'
+    parent = nodes.get('Textures')
+    if parent:
+        new_node.parent = parent
+        while True:
+            new_node.location += parent.location
+            if parent.parent:
+                parent = parent.parent
+            else:
+                break                    
+    new_node.projection = 'FLAT'
+    new_node.projection_blend = 0.0
+    new_node.select = False
+    new_node.width = 240.0
+    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+    new_node.outputs[1].default_value = 0.0
+
+    # COLOR * AO node (9)
+    new_node = nodes.new(type='ShaderNodeMix')
+    new_node.blend_type = 'MULTIPLY'
+    new_node.clamp_factor = True
+    new_node.clamp_result = False
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.data_type = 'RGBA'
+    new_node.factor_mode = 'UNIFORM'
+    new_node.label = 'COLOR * AO'
+    new_node.location = (-300.0, 300.0)
+    new_node.name = 'COLOR * AO'
+    new_node.select = False
+    new_node.width = 140.0
+    new_node.inputs[0].default_value = 0.0
+    new_node.inputs[1].default_value = [0.5, 0.5, 0.5]
+    new_node.inputs[2].default_value = 0.0
+    new_node.inputs[3].default_value = 0.0
+    new_node.inputs[4].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
+    new_node.inputs[6].default_value = [0.5, 0.5, 0.5, 1.0]
+    new_node.inputs[7].default_value = [0.5, 0.5, 0.5, 1.0]
+
+    # Invert GLOSS node (10)
+    new_node = nodes.new(type='ShaderNodeInvert')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.label = 'Invert Gloss'
+    new_node.location = (-300.0, -750.0)
+    new_node.name = 'Invert Gloss'
+    new_node.select = False
+    new_node.width = 140.0
+    new_node.inputs[0].default_value = 1.0
+    new_node.inputs[1].default_value = [0.0, 0.0, 0.0, 1.0]
+    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
+
+    # Normal Map node (11)
+    new_node = nodes.new(type='ShaderNodeNormalMap')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.location = (-300.0, -1100.0)
+    new_node.name = 'Normal Map'
+    new_node.select = False
+    new_node.space = 'TANGENT'
+    new_node.width = 150.0
+    new_node.inputs[0].default_value = 0.0
+    new_node.inputs[1].default_value = [0.5, 0.5, 1.0, 1.0]
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
+
+    # Displacement node (12)
+    new_node = nodes.new(type='ShaderNodeDisplacement')
+    new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
+    new_node.location = (-300.0, -1450.0)
+    new_node.name = 'Displacement'
+    new_node.select = False
+    new_node.space = 'OBJECT'
+    new_node.width = 140.0
+    new_node.inputs[0].default_value = 0.0
+    new_node.inputs[1].default_value = 0.5
+    new_node.inputs[2].default_value = 0.0
+    new_node.inputs[3].default_value = [0.0, 0.0, 0.0]
+    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
     
+    # Principled BSDF node (13)
+    new_node = principled_BSDF_node(nodes)
+
+    # Material output node (14)
+    new_node = material_output_node(nodes)
+
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["COL"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["AO"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["REFL"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["GLOSS"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["NRM"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["DISP16"].inputs["Vector"])
+    links.new(nodes["Texture Coordinate"].outputs["UV"], nodes["BUMP16"].inputs["Vector"])
+    links.new(nodes["COL"].outputs["Color"], nodes["COLOR * AO"].inputs["A"])
+    links.new(nodes["COL"].outputs["Alpha"], nodes["Principled BSDF"].inputs["Alpha"])
+    links.new(nodes["AO"].outputs["Color"], nodes["COLOR * AO"].inputs["B"])
+    links.new(nodes["REFL"].outputs["Color"], nodes["Principled BSDF"].inputs["Metallic"])
+    links.new(nodes["GLOSS"].outputs["Color"], nodes["Invert Gloss"].inputs["Color"])
+    links.new(nodes["NRM"].outputs["Color"], nodes["Normal Map"].inputs["Color"])
+    links.new(nodes["DISP16"].outputs["Color"], nodes["Displacement"].inputs["Height"])
+    links.new(nodes["COLOR * AO"].outputs["Result"], nodes["Principled BSDF"].inputs["Base Color"])
+    links.new(nodes["Invert Gloss"].outputs["Color"], nodes["Principled BSDF"].inputs["Roughness"])
+    links.new(nodes["Normal Map"].outputs["Normal"], nodes["Principled BSDF"].inputs["Normal"])
+    links.new(nodes["Displacement"].outputs["Displacement"], nodes["Material Output"].inputs["Displacement"])
+    links.new(nodes["Principled BSDF"].outputs["BSDF"], nodes["Material Output"].inputs["Surface"])
+
+    return mat
 
 def generate_colors(n_colors: int = 20) -> list:
     """
@@ -540,8 +892,8 @@ def main(object_file, output_file):
     galvanized_steel = create_galvanizedsteel()
     wood_flooring_ash_super_white = create_wood_flooring_ash_super_white()
     obj.blender_obj.data.materials.clear()
-    obj.blender_obj.data.materials.append(galvanized_steel)
-
+    # obj.blender_obj.data.materials.append(galvanized_steel)
+    obj.blender_obj.data.materials.append(wood_flooring_ash_super_white)
     # Render the scene
     data = bproc.renderer.render()
 
@@ -550,5 +902,5 @@ def main(object_file, output_file):
 
 if __name__ == "__main__":
     object_file = r"\assets\Raw_objects\Monkey.obj"
-    output_file = r"\output_imgs\000007.png"
+    output_file = r"\output_imgs\000005.png"
     main(object_file, output_file)
