@@ -131,8 +131,6 @@ def material_output_node(nodes)-> bpy.types.Node:
     new_node.select = False
     new_node.target = 'ALL'
     new_node.width = 140.0
-    new_node.inputs[2].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[3].default_value = 0.0
 
     return new_node
 
@@ -461,6 +459,10 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
         material_name + "_COL_2K.jpg",
     )
     new_node = nodes.new(type='ShaderNodeTexImage')
+    # attributes = dir(new_node)
+    # for attribute in attributes:
+    #     print(attribute)
+    # input()
     new_node.color = (0.6079999804496765, 0.6079999804496765, 0.6079999804496765)
     new_node.extension = 'REPEAT'
     new_node.image = bpy.data.images.load(texture_COL_path)
@@ -476,22 +478,10 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.label = 'COL'
     new_node.location = (-650.0, 300.0)
     new_node.name = 'COL'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # Texture AO node (3)
     # Image path
@@ -515,22 +505,10 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.label = 'AO'
     new_node.location = (-650.0, -50.0)
     new_node.name = 'AO'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # Texture REFL node (4)
     # Image path
@@ -554,22 +532,10 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.label = 'REFL'
     new_node.location = (-650.0, -400.0)
     new_node.name = 'REFL'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # Texture GLOSS node (5)
     # Image path
@@ -631,23 +597,11 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.interpolation = 'Linear'
     new_node.label = 'NRM'
     new_node.location = (-650.0, -1100.0)
-    new_node.name = 'NRM'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break                    
+    new_node.name = 'NRM'                 
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # Texture DISP node (7)
     # Image path
@@ -670,23 +624,11 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.interpolation = 'Cubic'
     new_node.label = 'DISP16'
     new_node.location = (-650.0, -1450.0)
-    new_node.name = 'DISP16'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break                    
+    new_node.name = 'DISP16'                   
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # Texture BUMP node (8)
     # Image path
@@ -709,23 +651,11 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.interpolation = 'Linear'
     new_node.label = 'BUMP16'
     new_node.location = (-650.0, -1800.0)
-    new_node.name = 'BUMP16'
-    parent = nodes.get('Textures')
-    if parent:
-        new_node.parent = parent
-        while True:
-            new_node.location += parent.location
-            if parent.parent:
-                parent = parent.parent
-            else:
-                break                    
+    new_node.name = 'BUMP16'                   
     new_node.projection = 'FLAT'
     new_node.projection_blend = 0.0
     new_node.select = False
     new_node.width = 240.0
-    new_node.inputs[0].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
-    new_node.outputs[1].default_value = 0.0
 
     # COLOR * AO node (9)
     new_node = nodes.new(type='ShaderNodeMix')
@@ -740,14 +670,6 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.name = 'COLOR * AO'
     new_node.select = False
     new_node.width = 140.0
-    new_node.inputs[0].default_value = 0.0
-    new_node.inputs[1].default_value = [0.5, 0.5, 0.5]
-    new_node.inputs[2].default_value = 0.0
-    new_node.inputs[3].default_value = 0.0
-    new_node.inputs[4].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[5].default_value = [0.0, 0.0, 0.0]
-    new_node.inputs[6].default_value = [0.5, 0.5, 0.5, 1.0]
-    new_node.inputs[7].default_value = [0.5, 0.5, 0.5, 1.0]
 
     # Invert GLOSS node (10)
     new_node = nodes.new(type='ShaderNodeInvert')
@@ -758,8 +680,6 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.select = False
     new_node.width = 140.0
     new_node.inputs[0].default_value = 1.0
-    new_node.inputs[1].default_value = [0.0, 0.0, 0.0, 1.0]
-    new_node.outputs[0].default_value = [0.800000011920929, 0.800000011920929, 0.800000011920929, 1.0]
 
     # Normal Map node (11)
     new_node = nodes.new(type='ShaderNodeNormalMap')
@@ -770,8 +690,6 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.space = 'TANGENT'
     new_node.width = 150.0
     new_node.inputs[0].default_value = 0.0
-    new_node.inputs[1].default_value = [0.5, 0.5, 1.0, 1.0]
-    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
 
     # Displacement node (12)
     new_node = nodes.new(type='ShaderNodeDisplacement')
@@ -781,11 +699,8 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     new_node.select = False
     new_node.space = 'OBJECT'
     new_node.width = 140.0
-    new_node.inputs[0].default_value = 0.0
     new_node.inputs[1].default_value = 0.5
     new_node.inputs[2].default_value = 0.0
-    new_node.inputs[3].default_value = [0.0, 0.0, 0.0]
-    new_node.outputs[0].default_value = [0.0, 0.0, 0.0]
     
     # Principled BSDF node (13)
     new_node = principled_BSDF_node(nodes)
@@ -807,11 +722,130 @@ def create_wood_flooring_ash_super_white(imgs_path: str = None, material_name: s
     links.new(nodes["GLOSS"].outputs["Color"], nodes["Invert Gloss"].inputs["Color"])
     links.new(nodes["NRM"].outputs["Color"], nodes["Normal Map"].inputs["Color"])
     links.new(nodes["DISP16"].outputs["Color"], nodes["Displacement"].inputs["Height"])
+    #links.new(nodes["COLOR * AO"].outputs["Result"], nodes["Material Output"].inputs["Surface"])
     links.new(nodes["COLOR * AO"].outputs["Result"], nodes["Principled BSDF"].inputs["Base Color"])
     links.new(nodes["Invert Gloss"].outputs["Color"], nodes["Principled BSDF"].inputs["Roughness"])
     links.new(nodes["Normal Map"].outputs["Normal"], nodes["Principled BSDF"].inputs["Normal"])
     links.new(nodes["Displacement"].outputs["Displacement"], nodes["Material Output"].inputs["Displacement"])
     links.new(nodes["Principled BSDF"].outputs["BSDF"], nodes["Material Output"].inputs["Surface"])
+
+
+
+    # New background material
+    mat = bpy.data.materials.new(name=material_name)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+
+    # Clear default nodes
+    nodes.clear()
+
+    # Texture coordinate node
+    texture_coordinate = nodes.new(type='ShaderNodeTexCoord')
+    texture_coordinate.location = (-800, 300)
+
+    def create_texture_node(label, image_path, location):
+        node = nodes.new(type='ShaderNodeTexImage')
+        node.image = bpy.data.images.load(image_path)
+        node.location = location
+        node.label = label
+        node.name = label
+        node.extension = 'REPEAT'
+        return node
+
+
+    current_directory = os.getcwd()
+    if imgs_path is None:
+        # The path from the current file to the material
+        path_to_material = os.path.join(
+            "assets",
+            "Raw_materials",
+            "Dishes",
+            material_name,
+        )
+        path = os.path.join(current_directory, path_to_material)
+    else:
+        path = imgs_path
+
+    # Image paths
+    texture_paths = {
+        "COL": os.path.join(path, material_name + "_COL_2K.jpg"),
+        "AO": os.path.join(path, material_name + "_AO_2K.jpg"),
+        "REFL": os.path.join(path, material_name + "_REFL_2K.jpg"),
+        "GLOSS": os.path.join(path, material_name + "_GLOSS_2K.jpg"),
+        "NRM": os.path.join(path, material_name + "_NRM_2K.png"),
+        "DISP16": os.path.join(path, material_name + "_DISP16_2K.tif"),
+        "BUMP16": os.path.join(path, material_name + "_BUMP16_2K.tif"),
+    }
+
+    # Create texture nodes
+    col_node = create_texture_node("COL", texture_paths["COL"], (-600, 300))
+    ao_node = create_texture_node("AO", texture_paths["AO"], (-600, 0))
+    refl_node = create_texture_node("REFL", texture_paths["REFL"], (-600, -300))
+    gloss_node = create_texture_node("GLOSS", texture_paths["GLOSS"], (-600, -600))
+    nrm_node = create_texture_node("NRM", texture_paths["NRM"], (-600, -900))
+    disp16_node = create_texture_node("DISP16", texture_paths["DISP16"], (-600, -1200))
+    bump16_node = create_texture_node("BUMP16", texture_paths["BUMP16"], (-600, -1500))
+
+    # COLOR * AO node
+    color_ao_node = nodes.new(type='ShaderNodeMixRGB')
+    color_ao_node.blend_type = 'MULTIPLY'
+    color_ao_node.location = (-300, 300)
+    color_ao_node.label = 'COLOR * AO'
+    color_ao_node.name = 'COLOR * AO'
+
+    # Invert GLOSS node
+    invert_gloss_node = nodes.new(type='ShaderNodeInvert')
+    invert_gloss_node.location = (-300, -600)
+    invert_gloss_node.label = 'Invert Gloss'
+    invert_gloss_node.name = 'Invert Gloss'
+
+    # Normal Map node
+    normal_map_node = nodes.new(type='ShaderNodeNormalMap')
+    normal_map_node.location = (-300, -900)
+    normal_map_node.label = 'Normal Map'
+    normal_map_node.name = 'Normal Map'
+
+    # Displacement node
+    displacement_node = nodes.new(type='ShaderNodeDisplacement')
+    displacement_node.location = (-300, -1200)
+    displacement_node.label = 'Displacement'
+    displacement_node.name = 'Displacement'
+
+    # Principled BSDF node
+    principled_bsdf_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+    principled_bsdf_node.location = (0, 0)
+    principled_bsdf_node.label = 'Principled BSDF'
+    principled_bsdf_node.name = 'Principled BSDF'
+
+    # Material output node
+    material_output_node_node = nodes.new(type='ShaderNodeOutputMaterial')
+    material_output_node_node.location = (200, 0)
+
+    # Create links
+    links.new(texture_coordinate.outputs["UV"], col_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], ao_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], refl_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], gloss_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], nrm_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], disp16_node.inputs["Vector"])
+    links.new(texture_coordinate.outputs["UV"], bump16_node.inputs["Vector"])
+
+    links.new(col_node.outputs["Color"], color_ao_node.inputs[1])
+    links.new(ao_node.outputs["Color"], color_ao_node.inputs[2])
+    links.new(color_ao_node.outputs["Color"], principled_bsdf_node.inputs["Base Color"])
+
+    links.new(refl_node.outputs["Color"], principled_bsdf_node.inputs["Metallic"])
+    links.new(gloss_node.outputs["Color"], invert_gloss_node.inputs["Color"])
+    links.new(invert_gloss_node.outputs["Color"], principled_bsdf_node.inputs["Roughness"])
+
+    links.new(nrm_node.outputs["Color"], normal_map_node.inputs["Color"])
+    links.new(normal_map_node.outputs["Normal"], principled_bsdf_node.inputs["Normal"])
+
+    links.new(disp16_node.outputs["Color"], displacement_node.inputs["Height"])
+    links.new(displacement_node.outputs["Displacement"], material_output_node_node.inputs["Displacement"])
+
+    links.new(principled_bsdf_node.outputs["BSDF"], material_output_node_node.inputs["Surface"])
 
     return mat
 
@@ -902,5 +936,5 @@ def main(object_file, output_file):
 
 if __name__ == "__main__":
     object_file = r"\assets\Raw_objects\Monkey.obj"
-    output_file = r"\output_imgs\000005.png"
+    output_file = r"\output_imgs\000003.png"
     main(object_file, output_file)
